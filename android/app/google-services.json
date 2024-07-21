@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "832601027749",
+    "firebase_url": "https://shelf-8c9b5-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "shelf-8c9b5",
+    "storage_bucket": "shelf-8c9b5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:832601027749:android:9c610488de0e1e7f84494c",
+        "android_client_info": {
+          "package_name": "com.example.shelf"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXd2wj158hhDLe4fFdkbRXRxPyMopqx7o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

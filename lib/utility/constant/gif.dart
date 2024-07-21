@@ -1,0 +1,1 @@
+const pedroGif = 'assets/gifs/pedro.gif';
