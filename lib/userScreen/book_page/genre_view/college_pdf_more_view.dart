@@ -3,13 +3,14 @@ import 'package:shelf/utility/widget/reusable_widget/reading_card_list_second.da
 import '../../../../../utility/constant/constant.dart' as constant;
 import '../../../../../utility/route_transitiion/route_transition.dart';
 import '../../book_view_screen/pdf_view_screen.dart';
+import '../details_page/detail_college_pdf.dart';
 import '../details_page/detail_page.dart';
 
-class GenreMoreView extends StatelessWidget {
+class CollegePdfMoreView extends StatelessWidget {
   final String category;
   final List<Map<String, dynamic>> collegePdf;
 
-  const GenreMoreView({
+  const CollegePdfMoreView({
     required this.category,
     required this.collegePdf,
     super.key,
@@ -38,22 +39,22 @@ class GenreMoreView extends StatelessWidget {
             scrollDirection: Axis.vertical,
             itemCount: collegePdf.length,
             itemBuilder: (context, index) {
-              final book = collegePdf[index];
+              final collegePdfs = collegePdf[index];
               return ReadingCardListSecond(
-                image: book['photoUrl'] ?? '',
-                title: book['bookName'] ?? 'Unknown Title',
-                auth: book['authorName'] ?? 'Unknown Author',
+                image: collegePdfs['photoUrl'] ?? '',
+                title: collegePdfs['subjectName'] ?? 'Unknown Title',
+                auth: collegePdfs['authorName'] ?? 'Unknown Author',
                 pressRead: () {
                   Navigator.of(context).push(
                     customPageRouteFromTop(
-                      PdfViewScreen(pdfUrl: book['pdfUrl'] ?? '',  title: book['bookName']),
+                      PdfViewScreen(pdfUrl: collegePdfs['pdfUrl'] ?? '',  title: collegePdfs['chapterName']),
                     ),
                   );
                 },
                 detail: () {
                   Navigator.of(context).push(
                     customPageRouteFromTop(
-                      DetailPageView(bookDetails: book),
+                      DetailCollegePdfPageView(bookDetails: collegePdfs),
                     ),
                   );
                 },

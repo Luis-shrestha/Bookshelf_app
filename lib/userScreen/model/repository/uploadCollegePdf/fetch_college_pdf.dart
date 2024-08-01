@@ -4,7 +4,7 @@ class FetchCollegePdf {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
   Future<List<Map<String, dynamic>>> getAllPdf() async {
-    final results = await _firebaseFirestore.collection('CollegePdf').get();
+    final results = await _firebaseFirestore.collection('collegePdf').get();
     return results.docs.map((e) {
       final data = e.data();
       data['id'] = e.id;  // Add the document ID to the data
