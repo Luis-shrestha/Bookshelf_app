@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shelf/supports/applog/applog.dart';
 import '../../../utility/customBackground/abstract_background.dart';
 import '../../../utility/customBackground/bottom_circular_clipper.dart';
@@ -164,6 +165,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         final Map<String, dynamic> userData = userDoc.data()!;
         final String name = userData['name'] ?? 'N/A';
         final String email = userData['email'] ?? 'N/A';
+        final String bio = userData['bio'] ?? 'N/A';
         AppLog.i("Profile Screen User Data", "${name}${email}");
         return Center(
           child: Column(
@@ -176,6 +178,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 10),
               Text(
                 'Email: $email',
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                bio.isEmpty? "" : 'Bio: $bio',
                 style: const TextStyle(fontSize: 16),
               ),
             ],

@@ -59,22 +59,24 @@ class _SeeAllBooksState extends State<SeeAllBooks> {
               fit: BoxFit.fitWidth,
             ),
           ),
-          child: RefreshIndicator(
-            onRefresh: _refreshData,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: SizedBox(
-                    width: constraints.maxWidth + 500,
-                    // Add extra width for horizontal scroll
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: _futureBuilderBookView(),
+          child: SingleChildScrollView(
+            child: RefreshIndicator(
+              onRefresh: _refreshData,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: SizedBox(
+                      width: constraints.maxWidth + 500,
+                      // Add extra width for horizontal scroll
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: _futureBuilderBookView(),
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         ),

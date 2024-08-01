@@ -29,7 +29,7 @@ class _ReadingCardListSecondState extends State<ReadingCardListSecond> {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(left: 24, bottom: 10, right: 24),
-      height: 245,
+      height: 225,
       width: 202,
       child: Stack(
         children: <Widget>[

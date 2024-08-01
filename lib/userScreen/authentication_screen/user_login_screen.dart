@@ -39,13 +39,13 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
 
     User? user = FirebaseAuth.instance.currentUser;
 
-   /* if (user != null) {
+    if (user != null) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => const HomeScreen(),
         ),
       );
-    }*/
+    }
 
     return firebaseApp;
   }
@@ -188,7 +188,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               "Admin Login",
               style: TextStyle(
                 color: Theme.of(context).textTheme.bodyLarge?.color,
-                fontSize: 16,
+                 fontSize: 16,
                 shadows: [
                   Shadow(
                     color: Colors.black45, // Use a darker color for the shadow

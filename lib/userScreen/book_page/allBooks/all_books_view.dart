@@ -51,52 +51,50 @@ class _AllBooksViewState extends State<AllBooksView> {
           onRefresh: _refreshData,
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            child: Container(
-              width: double.infinity,
-              child: FutureBuilder<List<List<Map<String, dynamic>>>>(
-                future: dataFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (snapshot.hasData) {
-                    final bookData = snapshot.data![0];
-                    return SizedBox(
-                      width: double.infinity,
-                      height: MediaQuery.of(context).size.height,
-                      child: ListView.builder(
-                        scrollDirection: Axis.vertical,
-                        itemCount: bookData.length,
-                        itemBuilder: (context, index) {
-                          return ReadingCardListSecond(
-                            image: bookData[index]['photoUrl'],
-                            title: bookData[index]['bookName'],
-                            auth: bookData[index]['authorName'],
-                            pressRead: () {
-                              Navigator.of(context).push(
-                                customPageRouteFromTop(
-                                  PdfViewScreen(pdfUrl: bookData[index]['pdfUrl'] ?? '',  title: bookData[index]['bookName']),
-                                ),
-                              );
-                            },
-                            detail: () {
-                              Navigator.of(context).push(
-                                customPageRouteFromTop(
-                                  DetailPageView(bookDetails: bookData[index]),
-                                ),
-                              );
-                            },
+            child: FutureBuilder<List<List<Map<String, dynamic>>>>(
+              future: dataFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (snapshot.hasData) {
+                  final bookData = snapshot.data![0];
+                  return Container(
+                    // color: Colors.blue,
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height,
+                    child: ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: 9,
+                      itemBuilder: (context, index) {
+                        return ReadingCardListSecond(
+                          image: bookData[index]['photoUrl'],
+                          title: bookData[index]['bookName'],
+                          auth: bookData[index]['authorName'],
+                          pressRead: () {
+                            Navigator.of(context).push(
+                              customPageRouteFromTop(
+                                PdfViewScreen(pdfUrl: bookData[index]['pdfUrl'] ?? '',  title: bookData[index]['bookName']),
+                              ),
+                            );
+                          },
+                          detail: () {
+                            Navigator.of(context).push(
+                              customPageRouteFromTop(
+                                DetailPageView(bookDetails: bookData[index]),
+                              ),
+                            );
+                          },
 
-                          );
-                        },
-                      ),
-                    );
-                  } else {
-                    return const Center(child: Text('No data available'));
-                  }
-                },
-              ),
+                        );
+                      },
+                    ),
+                  );
+                } else {
+                  return const Center(child: Text('No data available'));
+                }
+              },
             ),
           ),
         ),

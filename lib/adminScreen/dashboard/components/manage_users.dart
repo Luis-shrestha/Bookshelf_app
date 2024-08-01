@@ -92,7 +92,7 @@ class _ManageUsersViewState extends State<ManageUsersView> {
               child: DataTable(
                 dataRowMaxHeight: 60,
                 columnSpacing: 8.0,
-                headingRowColor: MaterialStateColor.resolveWith(
+                headingRowColor: WidgetStateColor.resolveWith(
                       (states) => constant.kBackGroundColor,
                 ),
                 columns: const [
