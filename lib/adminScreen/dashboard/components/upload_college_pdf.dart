@@ -1,84 +1,88 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shelf/adminScreen/dashboard/components/upload_college_pdf.dart';
+import 'package:shelf/adminScreen/dashboard/components/upload_book_update.dart';
+import 'package:shelf/userScreen/helper/collegePdfUploadHelper/file_upload_helper.dart';
+import 'package:shelf/userScreen/helper/collegePdfUploadHelper/photo_upload_helper.dart';
+import 'package:shelf/userScreen/model/bloc/uploadCollegePdf/upload_bloc.dart';
+import 'package:shelf/userScreen/model/repository/uploadCollegePdf/upload_college_pdf_repo.dart';
+import 'package:shelf/userScreen/model/repository/uploadCollegePdf/upload_subject_photo_repo.dart';
 import 'package:shelf/utility/widget/form_widget/upload_book_form.dart';
 import 'package:shelf/utility/widget/upload_file_widget/gesture_detector_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../utility/constant/constant.dart' as constant;
 import '../../../../utility/widget/file_photo_picker/file_photo_picker.dart';
-import '../../../userScreen/helper/upload_helper/file_upload_helper.dart';
-import '../../../userScreen/helper/upload_helper/photo_upload_helper.dart';
-import '../../../userScreen/model/bloc/upload_pdf_bloc/upload_bloc.dart';
-import '../../../userScreen/model/repository/upload_repo/upload_book_repo.dart';
-import '../../../userScreen/model/repository/upload_repo/upload_photo_repo.dart';
 import '../../main/components/side_menu.dart';
 
-class UploadBookUpdatedView extends StatelessWidget {
-  const UploadBookUpdatedView({super.key});
+class UploadCollegePdfView extends StatelessWidget {
+  const UploadCollegePdfView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) =>
-          UploadBloc(UploadBookRepository(), UploadPhotoRepository()),
-      child: const UploadBook(),
+          UploadCollegePdfBloc(UploadCollegePdfRepository(), UploadSubjectPhotoRepository()),
+      child: const UploadCollegePdfViewPage(),
     );
   }
 }
 
-class UploadBook extends StatefulWidget {
-  const UploadBook({super.key});
+class UploadCollegePdfViewPage extends StatefulWidget {
+  const UploadCollegePdfViewPage({super.key});
 
   @override
-  State<UploadBook> createState() => _UploadBookState();
+  State<UploadCollegePdfViewPage> createState() => _UploadCollegePdfViewPageState();
 }
 
-class _UploadBookState extends State<UploadBook> {
+class _UploadCollegePdfViewPageState extends State<UploadCollegePdfViewPage> {
   String? pdfName;
   String? photoName;
   File? selectedFile;
   File? selectedPhoto;
-  final UploadBookRepository uploadPdfRepository = UploadBookRepository();
-  final UploadPhotoRepository uploadPhotoRepository = UploadPhotoRepository();
+  final UploadCollegePdfRepository uploadCollegePdfRepository = UploadCollegePdfRepository();
+  final UploadSubjectPhotoRepository uploadSubjectPhotoRepository = UploadSubjectPhotoRepository();
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
-  late final FileUploadHelper fileUploadHelper;
-  late final PhotoUploadHelper photoUploadHelper;
+  late final CollegePdfUploadHelper collegePdfUploadHelper;
+  late final SubjectPhotoUploadHelper subjectPhotoUploadHelper;
 
   final _formKey = GlobalKey<FormState>();
 
   final _focusAuthorName = FocusNode();
-  final _focusBookName = FocusNode();
+  final _focusChapterName = FocusNode();
   final _focusDescription = FocusNode();
-  final _focusCategories = FocusNode();
+  final _focusSubjectName = FocusNode();
+  final _focusSemester = FocusNode();
 
   final _authorNameController = TextEditingController();
-  final _bookNameController = TextEditingController();
+  final _ChapterNameController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _categoriesController = TextEditingController();
+  final _subjectNameController = TextEditingController();
+  final _semesterController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    fileUploadHelper = FileUploadHelper(
-      uploadPdfRepository: uploadPdfRepository,
+    collegePdfUploadHelper = CollegePdfUploadHelper(
+      uploadCollegePdfRepository: uploadCollegePdfRepository,
       firebaseFirestore: _firebaseFirestore,
     );
-    photoUploadHelper = PhotoUploadHelper(
+    subjectPhotoUploadHelper = SubjectPhotoUploadHelper(
       firebaseFirestore: _firebaseFirestore,
-      uploadPhotoRepository: uploadPhotoRepository,
+      uploadSubjectPhotoRepository: uploadSubjectPhotoRepository,
     );
   }
 
   @override
   void dispose() {
     _focusAuthorName.dispose();
-    _focusBookName.dispose();
+    _focusChapterName.dispose();
     _focusDescription.dispose();
-    _focusCategories.dispose();
+    _focusSubjectName.dispose();
+    _focusSemester.dispose();
     _authorNameController.dispose();
-    _bookNameController.dispose();
+    _ChapterNameController.dispose();
     _descriptionController.dispose();
+    _semesterController.dispose();
     super.dispose();
   }
 
@@ -89,8 +93,8 @@ class _UploadBookState extends State<UploadBook> {
       selectedFile = null;
       selectedPhoto = null;
       _authorNameController.clear();
-      _bookNameController.clear();
-      _categoriesController.clear();
+      _ChapterNameController.clear();
+      _subjectNameController.clear();
       _descriptionController.clear();
       print('Selection reset');
     });
@@ -101,8 +105,9 @@ class _UploadBookState extends State<UploadBook> {
     return GestureDetector(
       onTap: () {
         _focusAuthorName.unfocus();
-        _focusBookName.unfocus();
+        _focusChapterName.unfocus();
         _focusDescription.unfocus();
+        _focusSemester.unfocus();
       },
       child: Scaffold(
         backgroundColor: constant.kBackGroundColor,
@@ -111,7 +116,7 @@ class _UploadBookState extends State<UploadBook> {
           iconTheme: IconThemeData(color: Colors.black87),
         ),
         drawer: SideMenu(),
-        body: BlocListener<UploadBloc, UploadState>(
+        body: BlocListener<UploadCollegePdfBloc, UploadCollegePdfState>(
           listener: (context, state) {
             if (state is UploadSuccessState) {
               ScaffoldMessenger.of(context)
@@ -120,7 +125,7 @@ class _UploadBookState extends State<UploadBook> {
             }
           },
           child:
-              BlocBuilder<UploadBloc, UploadState>(builder: (context, state) {
+          BlocBuilder<UploadCollegePdfBloc, UploadCollegePdfState>(builder: (context, state) {
             if (state is UploadLoadingState) {
               return Center(
                 child: Column(
@@ -156,22 +161,22 @@ class _UploadBookState extends State<UploadBook> {
                         Padding(
                           padding: const EdgeInsets.only(top: 20.0),
                           child: Text(
-                            "Do you want to upload a book? Updated page",
+                            "Upload College Pdf",
                             textAlign: TextAlign.center,
                             style: constant
                                 .kHeading2TextStyle.textTheme.bodyMedium,
                           ),
                         ),
                         const SizedBox(height: 10),
-                        BlocBuilder<UploadBloc, UploadState>(
+                        BlocBuilder<UploadCollegePdfBloc, UploadCollegePdfState>(
                             builder: (context, state) {
-                          if (state is UploadErrorState) {
-                            return Center(
-                              child: Text(state.errorUploadMessage),
-                            );
-                          }
-                          return Container();
-                        }),
+                              if (state is UploadErrorState) {
+                                return Center(
+                                  child: Text(state.errorUploadMessage),
+                                );
+                              }
+                              return Container();
+                            }),
                         Form(
                           key: _formKey,
                           child: Column(
@@ -185,17 +190,25 @@ class _UploadBookState extends State<UploadBook> {
                               ),
                               const SizedBox(height: 10),
                               UploadBookForm(
-                                focusNode: _focusBookName,
-                                controller: _bookNameController,
-                                labelText: 'Book Name',
+                                focusNode: _focusChapterName,
+                                controller: _ChapterNameController,
+                                labelText: 'Chapter Name with unit',
                                 prefixIcon: Icons.menu_book_outlined,
                                 func: (String value) {},
                               ),
                               const SizedBox(height: 10),
                               UploadBookForm(
-                                focusNode: _focusCategories,
-                                controller: _categoriesController,
-                                labelText: 'Categories of Book',
+                                focusNode: _focusSubjectName,
+                                controller: _subjectNameController,
+                                labelText: 'Subject Name',
+                                prefixIcon: Icons.category_rounded,
+                                func: (String value) {},
+                              ),
+                              const SizedBox(height: 10),
+                              UploadBookForm(
+                                focusNode: _focusSemester,
+                                controller: _semesterController,
+                                labelText: 'Semester',
                                 prefixIcon: Icons.category_rounded,
                                 func: (String value) {},
                               ),
@@ -268,23 +281,25 @@ class _UploadBookState extends State<UploadBook> {
                             onTap: () {
                               if (selectedFile != null &&
                                   selectedPhoto != null &&
-                                  _categoriesController != '' &&
+                                  _subjectNameController != '' &&
                                   _authorNameController != '' &&
-                                  _bookNameController != '' &&
+                                  _ChapterNameController != '' &&
+                                  _semesterController != '' &&
                                   _descriptionController != '') {
-                                context.read<UploadBloc>().add(
-                                      UploadButtonPressEvent(
-                                        pdfName: pdfName!,
-                                        pdf: selectedFile!,
-                                        photoName: photoName!,
-                                        photo: selectedPhoto!,
-                                        authorName: _authorNameController.text,
-                                        bookName: _bookNameController.text,
-                                        description:
-                                            _descriptionController.text,
-                                        category: _categoriesController.text,
-                                      ),
-                                    );
+                                context.read<UploadCollegePdfBloc>().add(
+                                  UploadButtonPressEvent(
+                                    pdfName: pdfName!,
+                                    pdf: selectedFile!,
+                                    photoName: photoName!,
+                                    photo: selectedPhoto!,
+                                    authorName: _authorNameController.text,
+                                    chapterName: _ChapterNameController.text,
+                                    description:
+                                    _descriptionController.text,
+                                    subjectName: _subjectNameController.text,
+                                    semester: _semesterController.text,
+                                  ),
+                                );
                               }
                             },
                           ),
@@ -304,14 +319,14 @@ class _UploadBookState extends State<UploadBook> {
 
                         const SizedBox(height: 45),
                         CustomButtonWidget(
-                          label: "Upload College Pdf",
+                          label: "Upload Book",
                           icon: Icons.swap_horiz_rounded,
                           color: Colors.orange,
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => UploadCollegePdfView(),
+                                builder: (context) => UploadBookUpdatedView(),
                               ),
                             );
                           },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../utility/widget/explore_view/genre_view.dart';
+import 'package:shelf/userScreen/book_page/genre_view/exploreCollegeBooks.dart';
+import 'package:shelf/userScreen/book_page/genre_view/explore_books.dart';
 import '../../../../utility/constant/constant.dart' as constant;
 import '../model/repository/upload_repo/fetch_data.dart';
 
@@ -14,6 +15,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   final FetchData fetchData = FetchData();
   late Future<Map<String, List<Map<String, dynamic>>>> dataFuture;
+  bool showExploreBooks = true;
 
   @override
   void initState() {
@@ -26,6 +28,13 @@ class _ExploreScreenState extends State<ExploreScreen> {
       dataFuture = fetchData.fetchAndGroupData();
     });
   }
+
+  void _swapView() {
+    setState(() {
+      showExploreBooks = !showExploreBooks;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,6 +43,15 @@ class _ExploreScreenState extends State<ExploreScreen> {
         title: const Text('Explore Book'),
         centerTitle: true,
         backgroundColor: constant.primaryColor,
+        actions: [
+          GestureDetector(
+            onTap: _swapView,
+            child: const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Icon(Icons.swap_horiz_rounded),
+            ),
+          )
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: _refreshData,
@@ -41,33 +59,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
           physics: const AlwaysScrollableScrollPhysics(),
           child: Container(
             width: double.infinity,
-            child: FutureBuilder<Map<String, List<Map<String, dynamic>>>>(
-              future: dataFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return const Center(child: Text('Error loading data'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text('No data available'));
-                } else {
-                  final groupedData = snapshot.data!;
-                  return Column(
-                    children: groupedData.entries.map((entry) {
-                      final category = entry.key;
-                      final books = entry.value;
-
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          GenreView(books: books, category: category),
-                        ],
-                      );
-                    }).toList(),
-                  );
-                }
-              },
-            ),
+            child: showExploreBooks ? ExploreBooks() : ExploreCollegeBooks(),
           ),
         ),
       ),
