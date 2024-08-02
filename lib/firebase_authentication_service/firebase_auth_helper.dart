@@ -18,35 +18,37 @@ class FirebaseAuthHelper {
     User? user;
 
     try {
-      // Create user with email and password
       UserCredential userCredential = await auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
       user = userCredential.user;
-
-      // Update the user's display name
       await user!.updateDisplayName(name);
 
       String? photoURL;
       if (userPhoto != null) {
         // Upload photo to Firebase Storage
         FirebaseStorage storage = FirebaseStorage.instance;
-        TaskSnapshot snapshot = await storage
-            .ref('userPhotos/${user.uid}')
-            .putFile(userPhoto);
+        TaskSnapshot snapshot =
+            await storage.ref('userPhotos/${user.uid}').putFile(userPhoto);
         photoURL = await snapshot.ref.getDownloadURL();
         await user.updatePhotoURL(photoURL);
       }
+
+      await user.reload();
+      user = auth.currentUser;
+
+      // Send verification email
+      await user!.sendEmailVerification();
 
       // Prepare user data to save to Firestore
       Map<String, dynamic> userData = {
         'name': name,
         'contact': contact,
         'email': email,
-        'userPhoto': userPhoto,
         'bio': bio,
+        'role': 'user', // Specify role
       };
       if (photoURL != null) {
         userData['photoURL'] = photoURL;
@@ -57,20 +59,28 @@ class FirebaseAuthHelper {
 
       // Save additional user information to Firestore
       FirebaseFirestore firestore = FirebaseFirestore.instance;
-      await firestore.collection('users').doc(user.uid).set(userData);
-
-      AppLog.i("User registered and data saved to Firestore:", "${user.uid}");
+      await firestore.collection('users').doc(user!.uid).set(userData);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        AppLog.i('The password provided is too weak.', '');
+        print('The password provided is too weak.');
       } else if (e.code == 'email-already-in-use') {
-        AppLog.i('The account already exists for that email.', '');
+        print('The account already exists for that email.');
       }
     } catch (e) {
-      AppLog.i('Firebase auth helper', '${e}');
+      print(e);
     }
 
     return user;
+  }
+
+  static Future<bool> isEmailVerified() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await user.reload();
+      final updatedUser = FirebaseAuth.instance.currentUser;
+      return updatedUser?.emailVerified ?? false;
+    }
+    return false;
   }
 
   static Future<User?> signInUsingEmailPassword({
@@ -98,4 +108,3 @@ class FirebaseAuthHelper {
     return user;
   }
 }
-

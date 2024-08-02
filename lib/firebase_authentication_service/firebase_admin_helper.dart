@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -44,7 +43,6 @@ class FirebaseAdminHelper {
         'name': name,
         'contact': contact,
         'email': email,
-        'userPhoto': userPhoto,
         'bio': bio,
         'role': 'admin', // Specify role as admin
       };
@@ -63,9 +61,11 @@ class FirebaseAdminHelper {
         print('The password provided is too weak.');
       } else if (e.code == 'email-already-in-use') {
         print('The account already exists for that email.');
+      } else {
+        print('Error: ${e.message}');
       }
     } catch (e) {
-      print(e);
+      print('Error: $e');
     }
 
     return user;
@@ -101,7 +101,11 @@ class FirebaseAdminHelper {
         print('No user found for that email.');
       } else if (e.code == 'wrong-password') {
         print('Wrong password provided.');
+      } else {
+        print('Error: ${e.message}');
       }
+    } catch (e) {
+      print('Error: $e');
     }
 
     return user;
@@ -110,26 +114,22 @@ class FirebaseAdminHelper {
   static Future<void> deleteUser({
     required String uid,
   }) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-
     try {
       await FirebaseFirestore.instance.collection('users').doc(uid).delete();
       await FirebaseAuth.instance.currentUser!.delete();
     } catch (e) {
-      print(e);
+      print('Error: $e');
     }
   }
 
   static Future<void> deleteAdmin({
     required String uid,
   }) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-
     try {
       await FirebaseFirestore.instance.collection('admins').doc(uid).delete();
       await FirebaseAuth.instance.currentUser!.delete();
     } catch (e) {
-      print(e);
+      print('Error: $e');
     }
   }
 }

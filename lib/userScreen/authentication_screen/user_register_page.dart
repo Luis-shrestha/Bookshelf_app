@@ -221,39 +221,41 @@ class _RegisterScreenState extends State<RegisterScreen> {
           _isProcessing = true;
         });
         _showLoadingDialog(context);
-        if (_nameTextController.text.isNotEmpty &&
-            _contactTextController.text.isNotEmpty &&
-            _emailTextController.text.isNotEmpty &&
-            _passwordTextController.text.isNotEmpty) {
-          context.read<RegisterBloc>().add(
-            SignUpButtonPressedEvent(
-              fullName: _nameTextController.text,
-              email: _emailTextController.text,
-              contact: _contactTextController.text,
-              password: _passwordTextController.text,
-            ),
+
+        if (_registerFormKey.currentState!.validate()) {
+          User? user = await FirebaseAuthHelper.registerUsingEmailPassword(
+            name: _nameTextController.text,
+            contact: _contactTextController.text.trim(),
+            email: _emailTextController.text.trim(),
+            password: _passwordTextController.text,
           );
-          if (_registerFormKey.currentState!.validate()) {
-            User? user = await FirebaseAuthHelper.registerUsingEmailPassword(
-              name: _nameTextController.text,
-              contact: _contactTextController.text.trim(),
-              email: _emailTextController.text.trim(),
-              password: _passwordTextController.text,
-              // userPhoto and bio are optional
-            );
 
-            AppLog.i("User Data:", "${user}");
+          if (user != null) {
+            // Show email verification dialog
+            _showEmailVerificationDialog(context);
 
-            setState(() {
-              _isProcessing = false;
-            });
-            _hideLoadingDialog(context);
-          } else {
-            setState(() {
-              _isProcessing = false;
-            });
-            _hideLoadingDialog(context);
+            // Wait for the user to verify the email before allowing login
+            bool emailVerified = await FirebaseAuthHelper.isEmailVerified();
+            if (emailVerified) {
+              // Proceed with further actions if needed
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text('Email is not verified.'),
+                ),
+              );
+            }
           }
+
+          setState(() {
+            _isProcessing = false;
+          });
+          _hideLoadingDialog(context);
+        } else {
+          setState(() {
+            _isProcessing = false;
+          });
+          _hideLoadingDialog(context);
         }
         resetSelection();
       },
@@ -262,11 +264,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
         foregroundColor: Colors.black,
         elevation: 12,
       ),
-      child: const Text(
-        'Sign up',
-      ),
+      child: const Text('Sign up'),
     );
   }
+
 
   void _showEmailVerificationDialog(BuildContext context) {
     showDialog(
@@ -288,6 +289,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       },
     );
   }
+
 
   Widget alreadyRegisterText() {
     return RichText(

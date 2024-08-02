@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:shelf/supports/applog/applog.dart';
 import 'package:shelf/utility/widget/form_widget/custom_text_field.dart';
 import '../../../firebase_authentication_service/firebase_admin_helper.dart';
 import '../../../firebase_authentication_service/validator.dart';
@@ -141,8 +142,11 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
           loginButton(),
           const SizedBox(height: 40),
           GestureDetector(
-            onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => UserLoginRegisterView()));
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const UserLoginRegisterView()),
+              );
             },
             child: Text(
               "User Login",
@@ -151,7 +155,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                 fontSize: 16,
                 shadows: [
                   Shadow(
-                    color: Colors.black45, // Use a darker color for the shadow
+                    color: Colors.black45,
                     blurRadius: 5.0,
                     offset: Offset(1.0, 1.0),
                   ),
@@ -195,7 +199,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Error signing in. Please try again.'),
+                content: Text('Login failed. Please check your credentials and verify your email.'),
               ),
             );
           }
@@ -208,7 +212,6 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
       ),
       child: Text(
         'Login',
-
         style: TextStyle(color: Theme.of(context).textTheme.bodyLarge!.color),
       ),
     );

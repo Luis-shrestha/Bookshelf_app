@@ -140,11 +140,11 @@ class _DashboardState extends State<Dashboard> {
             height: 285,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: bookData.length,
+              itemCount: 5,
               itemBuilder: (context, index) {
                 final book = bookData[index];
                 return ReadingCardList(
-                  id: book['id'], // Make sure to pass unique ID
+                  id: book['id'],
                   image: book['photoUrl'],
                   title: book['bookName'],
                   auth: book['authorName'],
