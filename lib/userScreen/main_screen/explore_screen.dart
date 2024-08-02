@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shelf/userScreen/book_page/genre_view/exploreCollegeBooks.dart';
 import 'package:shelf/userScreen/book_page/genre_view/explore_books.dart';
 import '../../../../utility/constant/constant.dart' as constant;
+import '../../utility/customBackground/abstract_background.dart';
+import '../../utility/customBackground/bottom_circular_clipper.dart';
 import '../model/repository/upload_repo/fetch_data.dart';
 
 class ExploreScreen extends StatefulWidget {
@@ -50,17 +52,31 @@ class _ExploreScreenState extends State<ExploreScreen> {
               padding: EdgeInsets.all(8.0),
               child: Icon(Icons.swap_horiz_rounded),
             ),
-          )
+          ),
         ],
       ),
       body: RefreshIndicator(
         onRefresh: _refreshData,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Container(
-            width: double.infinity,
-            child: showExploreBooks ? ExploreBooks() : ExploreCollegeBooks(),
-          ),
+        child: Stack(
+          children: [
+            SizedBox(
+              height: 250,
+              width: MediaQuery.of(context).size.width,
+              child: ClipPath(
+                clipper: BottomCircularClipper(),
+                child: CustomPaint(
+                  painter: AbstractBackgroundPainter(),
+                ),
+              ),
+            ),
+            SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Container(
+                width: double.infinity,
+                child: showExploreBooks ? ExploreBooks() : ExploreCollegeBooks(),
+              ),
+            ),
+          ],
         ),
       ),
     );

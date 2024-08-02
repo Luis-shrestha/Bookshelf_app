@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:shelf/adminScreen/authenticationScreen/admin_login_register_view.dart';
 import 'package:shelf/utility/widget/form_widget/custom_text_field.dart';
 import '../../../firebase_authentication_service/firebase_auth_helper.dart';
 import '../../../firebase_authentication_service/validator.dart';
@@ -180,7 +179,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               ],
             ),
           ),
-          InkWell(
+          /*InkWell(
             onTap: (){
               Navigator.push(context, MaterialPageRoute(builder: (context) => AdminLoginRegisterView()));
             },
@@ -198,7 +197,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                 ],
               ),
             ),
-          ),
+          ),*/
         ],
       ),
     );

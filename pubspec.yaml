@@ -41,7 +41,8 @@ dependencies:
   google_nav_bar: ^5.0.6
   firebase_storage: ^11.7.4
   file_picker: any
-  easy_pdf_viewer: any
+#  easy_pdf_viewer: any
+  flutter_pdfview: ^1.3.2
   cloud_firestore: any
   equatable: ^2.0.5
   flutter_bloc: any

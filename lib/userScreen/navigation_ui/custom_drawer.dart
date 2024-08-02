@@ -12,7 +12,7 @@ class CustomDrawer extends StatelessWidget {
 
   final List<Map<String, dynamic>> menuItems = [
     {'icon': Icons.home, 'title': 'Home', 'destination': const Dashboard()},
-    {'icon': Icons.favorite, 'title': 'Favorites', 'destination': const FavoriteScreen()},
+    {'icon': Icons.favorite, 'title': 'Favorites', 'destination': FavoriteScreen()},
     {'icon': Icons.explore, 'title': 'Explore', 'destination': const ExploreScreen()},
     {'icon': Icons.person, 'title': 'Profile', 'destination': const ProfileScreen()},
   ];

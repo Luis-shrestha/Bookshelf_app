@@ -25,7 +25,7 @@ class CollegePdfView extends StatelessWidget {
           bottom: BorderSide(
               width: 1, color: Colors.black38, style: BorderStyle.solid),
         ),*/
-          color: Colors.white,
+          color: Colors.white38,
           boxShadow: [
             BoxShadow(
                 spreadRadius: 5,
@@ -71,12 +71,10 @@ class CollegePdfView extends StatelessWidget {
               itemBuilder: (context, index) {
                 final collegePdf = books[index];
                 return ReadingCardList(
+                  id: collegePdf['id'],
                   image: collegePdf['photoUrl'] ?? '',
                   title: collegePdf['chapterName'] ?? 'Unknown Title',
                   auth: collegePdf['authorName'] ?? 'Unknown Author',
-                  addToFavorites: () {
-                    // context.read<FavoriteBloc>().add(FavoriteEvent.addToFavorites);
-                  },
                   pressRead: () {
                     Navigator.of(context).push(
                       customPageRouteFromTop(

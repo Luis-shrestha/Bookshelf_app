@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shelf/utility/widget/reusable_widget/two_side_rounded_button.dart';
+import 'package:provider/provider.dart';
+import '../../../supports/FavoriteManage/favorite_manager.dart';
+import '../../../supports/IdGenerator/id_generator.dart';
+import 'two_side_rounded_button.dart'; // Adjust the import as needed
 import '../../constant/constant.dart' as constant;
 
 class ReadingCardList extends StatefulWidget {
@@ -7,17 +10,17 @@ class ReadingCardList extends StatefulWidget {
   final String title;
   final String auth;
   final VoidCallback pressRead;
-  final VoidCallback addToFavorites;
   final VoidCallback detail;
+  final String id;
 
-  const ReadingCardList({
+  ReadingCardList({
     super.key,
     required this.image,
     required this.title,
     required this.auth,
     required this.pressRead,
     required this.detail,
-    required this.addToFavorites,
+    required this.id,
   });
 
   @override
@@ -25,11 +28,10 @@ class ReadingCardList extends StatefulWidget {
 }
 
 class _ReadingCardListState extends State<ReadingCardList> {
-  bool isFavorite = false;
-
   @override
   Widget build(BuildContext context) {
     return Container(
+      key: ValueKey(widget.id),
       margin: const EdgeInsets.only(left: 12, bottom: 40),
       height: 245,
       width: 202,
@@ -59,7 +61,6 @@ class _ReadingCardListState extends State<ReadingCardList> {
             left: 25,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              // Set the border radius here
               child: Image.network(
                 widget.image,
                 errorBuilder: (context, error, stackTrace) {
@@ -72,9 +73,21 @@ class _ReadingCardListState extends State<ReadingCardList> {
           Positioned(
             top: 35,
             right: 10,
-            child: IconButton(
-              icon: Icon(Icons.favorite_border),
-              onPressed: widget.addToFavorites,
+            child: Consumer<FavoriteManager>(
+              builder: (context, favoriteManager, child) {
+                final isFavorite = favoriteManager.favorites.contains(widget.id);
+                return IconButton(
+                  icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
+                  color: Colors.red,
+                  onPressed: () {
+                    if (isFavorite) {
+                      favoriteManager.removeFavorite(widget.id);
+                    } else {
+                      favoriteManager.addFavorite(widget.id);
+                    }
+                  },
+                );
+              },
             ),
           ),
           Positioned(

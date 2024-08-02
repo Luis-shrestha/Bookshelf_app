@@ -34,11 +34,11 @@ class _DashboardState extends State<Dashboard> {
       return null;
     }
   }
+
   @override
   void initState() {
     super.initState();
     _userData = fetchCurrentUserData();
-
     dataFuture = Future.wait([fetchData.getAllBook()]);
   }
 
@@ -47,7 +47,6 @@ class _DashboardState extends State<Dashboard> {
       dataFuture = Future.wait([fetchData.getAllBook()]);
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -66,20 +65,12 @@ class _DashboardState extends State<Dashboard> {
         final userDoc = snapshot.data!;
         final Map<String, dynamic> userData = userDoc.data()!;
         final String name = userData['name'] ?? 'N/A';
-        return  Scaffold(
+
+        return Scaffold(
           backgroundColor: constant.primaryColor,
           appBar: AppBar(
-            leading: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CircleAvatar(
-
-                backgroundImage: AssetImage(
-                  'assets/icons/user.png',
-                ), // Replace with your image URL
-              ),
-            ),
             backgroundColor: constant.primaryColor,
-            title: Text( 'Welcome $name',),
+            title: Text('Welcome $name'),
           ),
           body: RefreshIndicator(
             onRefresh: _refreshData,
@@ -115,9 +106,6 @@ class _DashboardState extends State<Dashboard> {
         );
       },
     );
-
-
-
   }
 
   Widget whatAreYouReadingTodayText() {
@@ -152,27 +140,33 @@ class _DashboardState extends State<Dashboard> {
             height: 285,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: 5,
+              itemCount: bookData.length,
               itemBuilder: (context, index) {
+                final book = bookData[index];
                 return ReadingCardList(
-                  image: bookData[index]['photoUrl'],
-                  title: bookData[index]['bookName'],
-                  auth: bookData[index]['authorName'],
+                  id: book['id'], // Make sure to pass unique ID
+                  image: book['photoUrl'],
+                  title: book['bookName'],
+                  auth: book['authorName'],
                   pressRead: () {
                     Navigator.of(context).push(
                       customPageRouteFromTop(
-                        PdfViewScreen(pdfUrl: bookData[index]['pdfUrl'] ?? '',  title: bookData[index]['bookName']),
+                        PdfViewScreen(
+                          pdfUrl: book['pdfUrl'] ?? '',
+                          title: book['bookName'],
+                        ),
                       ),
                     );
                   },
                   detail: () {
                     Navigator.of(context).push(
                       customPageRouteFromTop(
-                        DetailPageView(bookDetails: bookData[index]),
+                        DetailPageView(
+                          bookDetails: book,
+                        ),
                       ),
                     );
                   },
-                  addToFavorites: () {},
                 );
               },
             ),
@@ -191,18 +185,9 @@ class _DashboardState extends State<Dashboard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                    text: "Best of the ",
-                    style: constant.kHeading2TextStyle.textTheme.bodyMedium),
-                TextSpan(
-                    text: "day",
-                    style:
-                        constant.kHeading2TextStyleBold.textTheme.bodyMedium),
-              ],
-            ),
+          Text(
+            "Best of the day",
+            style: constant.kHeading2TextStyle.textTheme.bodyMedium,
           ),
           BestOfTheDayCard(size: size),
         ],

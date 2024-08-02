@@ -24,7 +24,7 @@ class GenreView extends StatelessWidget {
           bottom: BorderSide(
               width: 1, color: Colors.black38, style: BorderStyle.solid),
         ),*/
-        color: Colors.white,
+        color: Colors.white38,
         boxShadow: [
           BoxShadow(
             spreadRadius: 5,
@@ -70,12 +70,11 @@ class GenreView extends StatelessWidget {
               itemBuilder: (context, index) {
                 final book = books[index];
                 return ReadingCardList(
+                  id: book['id'],
                   image: book['photoUrl'] ?? '',
                   title: book['bookName'] ?? 'Unknown Title',
                   auth: book['authorName'] ?? 'Unknown Author',
-                  addToFavorites: () {
-                    // context.read<FavoriteBloc>().add(FavoriteEvent.addToFavorites);
-                  },
+
                   pressRead: () {
                     Navigator.of(context).push(
                       customPageRouteFromTop(

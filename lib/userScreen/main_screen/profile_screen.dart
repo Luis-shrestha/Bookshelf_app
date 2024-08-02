@@ -374,8 +374,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         DetailPageView(bookDetails: bookData[index]),
                       ),
                     );
-                  },
-                  addToFavorites: () {},
+                  }, id: bookData[index]['id'],
                 );
               },
             ),
