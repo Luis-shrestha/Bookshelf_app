@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../../supports/applog/applog.dart';
+
 class FetchData {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
@@ -27,4 +29,15 @@ class FetchData {
 
     return groupedData;
   }
+
+  /*Future<List<Map<String, dynamic>>> searchBooks(String query) async {
+    final allBooks = await getAllBook();
+    final filteredBooks = allBooks.where((book) {
+      final title = book['title']?.toLowerCase() ?? '';
+      return title.contains(query.toLowerCase());
+    }).toList();
+
+    AppLog.i('Filtered Books:','$filteredBooks'); // Debugging statement
+    return filteredBooks;
+  }*/
 }

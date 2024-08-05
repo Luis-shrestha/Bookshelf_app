@@ -5,12 +5,15 @@ class CustomSearchBar extends StatelessWidget {
   final String labelText;
   final IconData prefixIcon;
   final FocusNode focusNode;
+  final ValueChanged<String>? onChanged; // Add this line
 
-  const CustomSearchBar({super.key,
+  const CustomSearchBar({
+    super.key,
     required this.controller,
     required this.labelText,
     required this.prefixIcon,
     required this.focusNode,
+    this.onChanged, // Add this line
   });
 
   @override
@@ -20,10 +23,12 @@ class CustomSearchBar extends StatelessWidget {
       child: TextField(
         textAlign: TextAlign.left,
         controller: controller,
+        focusNode: focusNode,
+        onChanged: onChanged, // Use this line
         decoration: InputDecoration(
           labelText: labelText,
           labelStyle: TextStyle(
-              color: Colors.black87
+            color: Colors.black87,
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(5),
@@ -32,16 +37,17 @@ class CustomSearchBar extends StatelessWidget {
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(5),
             borderSide: const BorderSide(
-                color: Colors.black54, width: 0.6),
+              color: Colors.black54, width: 0.6,
+            ),
           ),
           focusedBorder: OutlineInputBorder(
             borderSide: const BorderSide(
-                color: Colors.black54, width: 0.6),
+              color: Colors.black54, width: 0.6,
+            ),
             borderRadius: BorderRadius.circular(5.0),
           ),
           prefixIcon: Icon(prefixIcon),
         ),
-
       ),
     );
   }
