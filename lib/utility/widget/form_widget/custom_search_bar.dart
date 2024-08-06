@@ -3,17 +3,19 @@ import 'package:flutter/material.dart';
 class CustomSearchBar extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
-  final IconData prefixIcon;
+  final IconData? prefixIcon;
   final FocusNode focusNode;
-  final ValueChanged<String>? onChanged; // Add this line
+  final ValueChanged<String>? onChanged;
+  final IconData suffixIcon;
 
   const CustomSearchBar({
     super.key,
     required this.controller,
     required this.labelText,
-    required this.prefixIcon,
+    this.prefixIcon,
     required this.focusNode,
-    this.onChanged, // Add this line
+    this.onChanged,
+    required this.suffixIcon,
   });
 
   @override
@@ -46,7 +48,7 @@ class CustomSearchBar extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(5.0),
           ),
-          prefixIcon: Icon(prefixIcon),
+          suffixIcon: Icon(suffixIcon),
         ),
       ),
     );

@@ -43,7 +43,7 @@ class AdminLoginRegisterView extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Tab(
+                  /*Tab(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -56,14 +56,14 @@ class AdminLoginRegisterView extends StatelessWidget {
                         )
                       ],
                     ),
-                  ),
+                  ),*/
                 ],
               ),
               Expanded(
                 child: const TabBarView(
                   children: <Widget>[
                     AdminLoginScreen(),
-                    AdminRegisterPage(),
+                    // AdminRegisterPage(),
                   ],
                 ),
               ),

@@ -77,16 +77,19 @@
             ? SizedBox.shrink()
             : Padding(
           padding: const EdgeInsets.all(8.0),
-          child: CustomSearchBar(
-            controller: searchController,
-            labelText: 'Search Books',
-            prefixIcon: Icons.search,
-            focusNode: _searchFocus,
-            onChanged: (val) {
-              setState(() {
-                // Trigger rebuild when search text changes
-              });
-            },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: CustomSearchBar(
+              controller: searchController,
+              labelText: 'Search Books',
+              suffixIcon: Icons.search,
+              focusNode: _searchFocus,
+              onChanged: (val) {
+                setState(() {
+                  searchController.text = val;
+                });
+              },
+            ),
           ),
         ),
       );
@@ -106,7 +109,7 @@
             } else {
               final groupedData = snapshot.data!;
               final searchQuery = searchController.text.toLowerCase();
-
+              AppLog.d("searchQuery", "$searchQuery");
               final filteredData = groupedData.map((category, books) {
                 final filteredBooks = books
                     .where((book) =>

@@ -30,14 +30,4 @@ class FetchData {
     return groupedData;
   }
 
-  /*Future<List<Map<String, dynamic>>> searchBooks(String query) async {
-    final allBooks = await getAllBook();
-    final filteredBooks = allBooks.where((book) {
-      final title = book['title']?.toLowerCase() ?? '';
-      return title.contains(query.toLowerCase());
-    }).toList();
-
-    AppLog.i('Filtered Books:','$filteredBooks'); // Debugging statement
-    return filteredBooks;
-  }*/
 }

@@ -43,7 +43,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
         child: Stack(
           children: [
             SizedBox(
-              height: 250,
+              height: 300,
               width: MediaQuery.of(context).size.width,
               child: ClipPath(
                 clipper: BottomCircularClipper(),
@@ -54,7 +54,6 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
             ),
             Column(
               children: [
-
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
