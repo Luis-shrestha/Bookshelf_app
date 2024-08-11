@@ -33,18 +33,16 @@ class _ExploreCollegeBooksState extends State<ExploreCollegeBooks> {
           return const Center(child: Text('No data available'));
         } else {
           final groupedData = snapshot.data!;
-          return Column(
-            children: groupedData.entries.map((entry) {
-              final category = entry.key;
-              final collegePdf = entry.value;
+          return SingleChildScrollView(  // This makes the entire view scrollable
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: groupedData.entries.map((entry) {
+                final category = entry.key;
+                final collegePdf = entry.value;
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CollegePdfView(books: collegePdf, category: category),
-                ],
-              );
-            }).toList(),
+                return CollegePdfView(books: collegePdf, category: category);
+              }).toList(),
+            ),
           );
         }
       },

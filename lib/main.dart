@@ -5,7 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:shelf/supports/FavoriteManage/favorite_manager.dart';
 import 'package:shelf/theme/themeBloc/theme_bloc.dart';
 import 'package:shelf/theme/themeData.dart';
-import 'userScreen/splash_screen/splash_screen.dart'; // Import your SplashScreen
+import 'userScreen/splash_screen/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
