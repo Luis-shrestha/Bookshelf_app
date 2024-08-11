@@ -61,6 +61,7 @@ dependencies:
   fl_chart: ^0.68.0
   flutter_svg: ^2.0.10+1
   url_launcher: ^6.0.20
+  flutter_file_downloader: ^2.0.0
 
 dev_dependencies:
   flutter_test:
