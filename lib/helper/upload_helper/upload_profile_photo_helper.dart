@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../model/repository/uploadProfile_repo.dart';
+import '../../userScreen/model/repository/uploadProfile_repo.dart';
+
 
 class UploadProfilePhotoHelper {
   final UploadProfilePhotoRepository uploadProfilePhotoRepository;

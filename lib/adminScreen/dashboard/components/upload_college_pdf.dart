@@ -2,8 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shelf/adminScreen/dashboard/components/upload_book_update.dart';
-import 'package:shelf/userScreen/helper/collegePdfUploadHelper/file_upload_helper.dart';
-import 'package:shelf/userScreen/helper/collegePdfUploadHelper/photo_upload_helper.dart';
+
 import 'package:shelf/userScreen/model/bloc/uploadCollegePdf/upload_bloc.dart';
 import 'package:shelf/userScreen/model/repository/uploadCollegePdf/upload_college_pdf_repo.dart';
 import 'package:shelf/userScreen/model/repository/uploadCollegePdf/upload_subject_photo_repo.dart';
@@ -12,6 +11,8 @@ import 'package:shelf/utility/widget/upload_file_widget/gesture_detector_widget.
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../utility/constant/constant.dart' as constant;
 import '../../../../utility/widget/file_photo_picker/file_photo_picker.dart';
+import '../../../helper/collegePdfUploadHelper/file_upload_helper.dart';
+import '../../../helper/collegePdfUploadHelper/photo_upload_helper.dart';
 import '../../main/components/side_menu.dart';
 
 class UploadCollegePdfView extends StatelessWidget {

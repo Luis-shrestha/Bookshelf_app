@@ -7,8 +7,8 @@ import 'package:shelf/utility/widget/upload_file_widget/gesture_detector_widget.
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../utility/constant/constant.dart' as constant;
 import '../../../../utility/widget/file_photo_picker/file_photo_picker.dart';
-import '../../../userScreen/helper/upload_helper/file_upload_helper.dart';
-import '../../../userScreen/helper/upload_helper/photo_upload_helper.dart';
+import '../../../helper/upload_helper/file_upload_helper.dart';
+import '../../../helper/upload_helper/photo_upload_helper.dart';
 import '../../../userScreen/model/bloc/upload_pdf_bloc/upload_bloc.dart';
 import '../../../userScreen/model/repository/upload_repo/upload_book_repo.dart';
 import '../../../userScreen/model/repository/upload_repo/upload_photo_repo.dart';

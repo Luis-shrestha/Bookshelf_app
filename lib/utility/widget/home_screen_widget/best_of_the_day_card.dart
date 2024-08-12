@@ -18,11 +18,21 @@ class BestOfTheDayCard extends StatefulWidget {
 class _BestOfTheDayCardState extends State<BestOfTheDayCard> {
   final FetchData fetchData = FetchData();
   late Future<List<List<Map<String, dynamic>>>> dataFuture;
+  late int randomNumber;
 
   @override
   void initState() {
     super.initState();
     dataFuture = Future.wait([fetchData.getAllBook()]);
+
+    // Use the current date as the seed for the random number generator
+    final now = DateTime.now();
+    final random = Random(now.day + now.month + now.year);
+    dataFuture.then((bookData) {
+      setState(() {
+        randomNumber = random.nextInt(bookData[0].length);
+      });
+    });
   }
 
   @override
@@ -36,8 +46,6 @@ class _BestOfTheDayCardState extends State<BestOfTheDayCard> {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {
           final bookData = snapshot.data![0];
-          Random random = new Random();
-          int randomNumber = random.nextInt(bookData.length);
           return SizedBox(
             height: 285,
             child: ListView.builder(

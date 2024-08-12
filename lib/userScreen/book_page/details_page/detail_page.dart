@@ -1,9 +1,11 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../../../utility/constant/constant.dart' as constant;
 import '../../../../../utility/route_transitiion/route_transition.dart';
+import '../../../helper/notificationHelper/notification_service.dart';
+import '../../../supports/applog/applog.dart';
 import '../../book_view_screen/pdf_view_screen.dart';
 import '../../model/repository/upload_repo/fetch_data.dart';
 
@@ -18,21 +20,16 @@ class DetailPageView extends StatefulWidget {
 
 class _DetailPageViewState extends State<DetailPageView> {
   final FetchData fetchData = FetchData();
+  final NotificationService notificationService = NotificationService(); // Instantiate the NotificationService
 
   late Future<List<List<Map<String, dynamic>>>> dataFuture;
-
   double? _progress;
 
   @override
   void initState() {
     super.initState();
     dataFuture = Future.wait([fetchData.getAllBook()]);
-  }
-
-  Future<void> _refreshData() async {
-    setState(() {
-      dataFuture = Future.wait([fetchData.getAllBook()]);
-    });
+    notificationService.initialize(); // Initialize the notification service
   }
 
   @override
@@ -82,8 +79,7 @@ class _DetailPageViewState extends State<DetailPageView> {
                               bookDetails(),
                               const SizedBox(height: 8),
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
                                   startReadingButton(),
                                   downloadButton(),
@@ -237,35 +233,73 @@ class _DetailPageViewState extends State<DetailPageView> {
     return SizedBox(
       width: 150,
       height: 50,
-      child: _progress != null
-          ? const CircularProgressIndicator()
-          : ElevatedButton(
-              onPressed: () async {
-                FileDownloader.downloadFile(
-                    url: book['pdf'].trim(),
-                    onProgress: (name, progress) {
-                      setState(() {
-                        _progress = progress;
-                      });
-                    },
-                    onDownloadCompleted: (value) {
-                      setState(() {
-                        _progress = null;
-                      });
-                    });
+      child: ElevatedButton(
+        onPressed: () async {
+          showDownloadDialog(); // Show the dialog when the button is pressed
+
+          try {
+            await FileDownloader.downloadFile(
+              url: book['pdfUrl'],
+              onProgress: (name, progress) {
+                AppLog.d("Download Url", "${book['pdfUrl']}");
+                setState(() {
+                  _progress = progress / 100;
+                });
               },
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Image.asset(
-                    'assets/icons/download.png',
-                    height: 24,
+              onDownloadCompleted: (filePath) async {
+                setState(() {
+                  _progress = null;
+                });
+                Navigator.of(context).pop(); // Close the dialog
+                AppLog.d("Download completed:", "${filePath}");
+
+                // Show notification on download completion
+                await notificationService.showNotification(
+                    "Download Complete",
+                    "The book ${book['bookName']} has been downloaded successfully."
+                );
+
+                // Show a toast message using a SnackBar
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      "Download completed: ${book['bookName']}",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    backgroundColor: Colors.green,
+                    duration: Duration(seconds: 3),
                   ),
-                  SizedBox(width: 8),
-                  Text("Download", style: TextStyle(color: Colors.black)),
-                ],
-              ),
+                );
+              },
+
+              onDownloadError: (error) {
+                setState(() {
+                  _progress = null;
+                });
+                Navigator.of(context).pop(); // Close the dialog
+                AppLog.d("Download Error:", " $error");
+              },
+            );
+          } catch (e) {
+            setState(() {
+              _progress = null;
+            });
+            Navigator.of(context).pop(); // Close the dialog
+            AppLog.d("Download failed:", "$e");
+          }
+        },
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Image.asset(
+              'assets/icons/download.png',
+              height: 24,
             ),
+            SizedBox(width: 8),
+            Text("Download", style: TextStyle(color: Colors.black)),
+          ],
+        ),
+      ),
     );
   }
 
@@ -287,6 +321,42 @@ class _DetailPageViewState extends State<DetailPageView> {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _refreshData() async {
+    setState(() {
+      dataFuture = Future.wait([fetchData.getAllBook()]);
+    });
+  }
+
+  void showDownloadDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Downloading...'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _progress != null
+                  ? CircularProgressIndicator(value: _progress)
+                  : CircularProgressIndicator(),
+              SizedBox(height: 20),
+              Text('Please wait while the file is downloading.'),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
