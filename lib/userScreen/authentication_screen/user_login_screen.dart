@@ -180,7 +180,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               ],
             ),
           ),
-          /*InkWell(
+          InkWell(
             onTap: (){
               Navigator.push(context, MaterialPageRoute(builder: (context) => AdminLoginRegisterView()));
             },
@@ -198,7 +198,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                 ],
               ),
             ),
-          ),*/
+          ),
         ],
       ),
     );

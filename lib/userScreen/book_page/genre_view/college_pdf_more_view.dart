@@ -41,6 +41,7 @@ class CollegePdfMoreView extends StatelessWidget {
             itemBuilder: (context, index) {
               final collegePdfs = collegePdf[index];
               return ReadingCardListSecond(
+                id: collegePdfs['id'],
                 image: collegePdfs['photoUrl'] ?? '',
                 title: collegePdfs['subjectName'] ?? 'Unknown Title',
                 auth: collegePdfs['authorName'] ?? 'Unknown Author',

@@ -41,8 +41,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       backgroundColor: constant.primaryColor,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Explore Book'),
         centerTitle: true,
         backgroundColor: constant.primaryColor,

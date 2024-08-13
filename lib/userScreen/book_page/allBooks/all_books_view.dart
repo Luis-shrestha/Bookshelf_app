@@ -68,21 +68,23 @@ class _AllBooksViewState extends State<AllBooksView> {
                       scrollDirection: Axis.vertical,
                       itemCount: 9,
                       itemBuilder: (context, index) {
+                        final book = bookData[index];
                         return ReadingCardListSecond(
-                          image: bookData[index]['photoUrl'],
-                          title: bookData[index]['bookName'],
-                          auth: bookData[index]['authorName'],
+                          id: book['id'],
+                          image: book['photoUrl'],
+                          title: book['bookName'],
+                          auth: book['authorName'],
                           pressRead: () {
                             Navigator.of(context).push(
                               customPageRouteFromTop(
-                                PdfViewScreen(pdfUrl: bookData[index]['pdfUrl'] ?? '',  title: bookData[index]['bookName']),
+                                PdfViewScreen(pdfUrl: book['pdfUrl'] ?? '',  title: book['bookName']),
                               ),
                             );
                           },
                           detail: () {
                             Navigator.of(context).push(
                               customPageRouteFromTop(
-                                DetailPageView(bookDetails: bookData[index]),
+                                DetailPageView(bookDetails: book),
                               ),
                             );
                           },

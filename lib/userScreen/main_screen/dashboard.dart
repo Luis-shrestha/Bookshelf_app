@@ -69,6 +69,7 @@ class _DashboardState extends State<Dashboard> {
         return Scaffold(
           backgroundColor: constant.primaryColor,
           appBar: AppBar(
+            automaticallyImplyLeading: false,
             backgroundColor: constant.primaryColor,
             title: Text('Welcome $name'),
           ),

@@ -40,6 +40,7 @@ class GenreMoreView extends StatelessWidget {
             itemBuilder: (context, index) {
               final book = collegePdf[index];
               return ReadingCardListSecond(
+                id: book['id'],
                 image: book['photoUrl'] ?? '',
                 title: book['bookName'] ?? 'Unknown Title',
                 auth: book['authorName'] ?? 'Unknown Author',
