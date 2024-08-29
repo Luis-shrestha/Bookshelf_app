@@ -107,4 +107,13 @@ class FirebaseAuthHelper {
 
     return user;
   }
+
+  static Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      print('Error: $e');
+      rethrow;
+    }
+  }
 }

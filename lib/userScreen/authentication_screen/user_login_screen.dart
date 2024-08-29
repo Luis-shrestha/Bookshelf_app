@@ -2,11 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:shelf/userScreen/forgotPassword/forgot_password_view.dart';
 import 'package:shelf/utility/widget/form_widget/custom_text_field.dart';
 import '../../../firebase_authentication_service/firebase_auth_helper.dart';
 import '../../../firebase_authentication_service/validator.dart';
 import '../../../utility/constant/constant.dart' as constant;
 import '../../adminScreen/authenticationScreen/admin_login_register_view.dart';
+import '../../supports/applog/applog.dart';
 import '../main_screen/home_screen.dart';
 
 class UserLoginScreen extends StatefulWidget {
@@ -80,6 +82,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                         height: 50,
                       ),
                       title(),
+                      SizedBox(height: 10,),
                       loginForm(),
                     ],
                   ),
@@ -129,7 +132,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
             labelText: 'Email',
             prefixIcon: Icons.email,
           ),
-          const SizedBox(height: 8.0),
+          const SizedBox(height: 16.0),
           CustomTextField(
             focusNode: _focusPassword,
             validator: (value) => Validator.validatePassword(
@@ -139,16 +142,23 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
             labelText: 'Password',
             prefixIcon: Icons.lock,
             suffixIcon:
-            _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                _obscurePassword ? Icons.visibility : Icons.visibility_off,
             suffixIconOnPressed: _togglePasswordVisibility,
             obscureText: _obscurePassword,
           ),
           const SizedBox(height: 14.0),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               InkWell(
-                // onTap: (){},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ForgotPasswordView(),
+                    ),
+                  );
+                },
                 child: Text("forget password?"),
               ),
             ],
@@ -181,14 +191,17 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
             ),
           ),
           InkWell(
-            onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AdminLoginRegisterView()));
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AdminLoginRegisterView()));
             },
-            child:  Text(
+            child: Text(
               "Admin Login",
               style: TextStyle(
                 color: Theme.of(context).textTheme.bodyLarge?.color,
-                 fontSize: 16,
+                fontSize: 16,
                 shadows: [
                   Shadow(
                     color: Colors.black45, // Use a darker color for the shadow
@@ -208,49 +221,50 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
     return _isProcessing
         ? const CircularProgressIndicator()
         : ElevatedButton(
-      onPressed: () async {
-        _focusEmail.unfocus();
-        _focusPassword.unfocus();
+            onPressed: () async {
+              _focusEmail.unfocus();
+              _focusPassword.unfocus();
 
-        if (_formKey.currentState!.validate()) {
-          setState(() {
-            _isProcessing = true;
-          });
+              if (_formKey.currentState!.validate()) {
+                setState(() {
+                  _isProcessing = true;
+                });
 
-          User? user = await FirebaseAuthHelper.signInUsingEmailPassword(
-            email: _emailTextController.text,
-            password: _passwordTextController.text,
+                User? user = await FirebaseAuthHelper.signInUsingEmailPassword(
+                  email: _emailTextController.text,
+                  password: _passwordTextController.text,
+                );
+
+                setState(() {
+                  _isProcessing = false;
+                });
+
+                if (user != null) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => const HomeScreen(),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Center(child: Text('Email or password Error')),
+                    ),
+                  );
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              fixedSize: const Size(200, 50),
+              backgroundColor: Colors.blue.shade100,
+              elevation: 12,
+            ),
+            child: Text(
+              'Login',
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyLarge!.color),
+            ),
           );
-
-          setState(() {
-            _isProcessing = false;
-          });
-
-          if (user != null) {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => const HomeScreen(),
-              ),
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Center(child: Text('Email or password Error')),
-              ),
-            );
-          }
-        }
-      },
-      style: ElevatedButton.styleFrom(
-          fixedSize: const Size(200, 50),
-          backgroundColor: Colors.blue.shade100,
-        elevation: 12,),
-      child: Text(
-        'Login',
-        style: TextStyle(
-            color: Theme.of(context).textTheme.bodyLarge!.color),
-      ),
-    );
   }
 
 

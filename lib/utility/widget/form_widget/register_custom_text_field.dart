@@ -36,16 +36,16 @@ class RegisterCustomTextField extends StatelessWidget {
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: Colors.black54),
+          borderSide: BorderSide(color: Colors.black),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(20),
           borderSide: const BorderSide(
-              color: Colors.black54, width: 0.6),
+              color: Colors.black, width: 0.6),
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: const BorderSide(
-              color: Colors.black54, width: 0.6),
+              color: Colors.black, width: 0.6),
           borderRadius: BorderRadius.circular(30.0),
         ),
         prefixIcon: Icon(prefixIcon),

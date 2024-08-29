@@ -308,7 +308,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
   }
 
-
   Widget alreadyRegisterText() {
     return RichText(
       text: TextSpan(
