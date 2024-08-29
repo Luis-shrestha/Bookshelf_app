@@ -58,6 +58,7 @@ class GenreMoreView extends StatelessWidget {
                     ),
                   );
                 },
+                heroTag: 'bookImageHero_${book['id']}',
               );
             },
           ),

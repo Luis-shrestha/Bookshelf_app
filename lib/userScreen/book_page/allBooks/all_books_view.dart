@@ -88,7 +88,7 @@ class _AllBooksViewState extends State<AllBooksView> {
                               ),
                             );
                           },
-
+                          heroTag: 'bookImageHero_${book['id']}',
                         );
                       },
                     ),

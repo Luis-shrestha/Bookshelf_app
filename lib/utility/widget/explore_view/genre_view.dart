@@ -79,6 +79,7 @@ class GenreView extends StatelessWidget {
                       ),
                     );
                   },
+                  heroTag: 'bookImageHero_${book['id']}',
                   detail: () {
                     Navigator.of(context).push(
                       customPageRouteFromTop(

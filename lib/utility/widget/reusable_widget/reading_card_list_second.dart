@@ -11,6 +11,7 @@ class ReadingCardListSecond extends StatefulWidget {
   final VoidCallback pressRead;
   final VoidCallback detail;
   final String id;
+  final String heroTag;
 
   const ReadingCardListSecond({
     super.key,
@@ -20,6 +21,7 @@ class ReadingCardListSecond extends StatefulWidget {
     required this.pressRead,
     required this.detail,
     required this.id,
+    required this.heroTag,
   });
 
   @override
@@ -60,15 +62,18 @@ class _ReadingCardListSecondState extends State<ReadingCardListSecond> {
           Positioned(
             top: 45,
             left: 25,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              // Set the border radius here
-              child: Image.network(
-                widget.image,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(Icons.error);
-                },
-                height: 150,
+            child: Hero(
+              tag: widget.heroTag,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                // Set the border radius here
+                child: Image.network(
+                  widget.image,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Icon(Icons.error);
+                  },
+                  height: 150,
+                ),
               ),
             ),
           ),

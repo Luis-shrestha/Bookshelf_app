@@ -70,7 +70,7 @@ class _BestOfTheDayCardState extends State<BestOfTheDayCard> {
                               SizedBox(height: 10),
                               Text(
                                 "Today's best Books",
-                                style: TextStyle(fontSize: 9, color: constant.kLightBlackColor),
+                                style: TextStyle(fontSize: 13, color: constant.kLightBlackColor),
                               ),
                               Text(
                                 bookData[randomNumber]['bookName'],
@@ -83,7 +83,7 @@ class _BestOfTheDayCardState extends State<BestOfTheDayCard> {
                               Expanded(
                                 child: Text(
                                   bookData[randomNumber]['bookDescription'],
-                                  maxLines: 3,
+                                  maxLines: 5,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(fontSize: 10, color: constant.kLightBlackColor),
                                 ),

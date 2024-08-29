@@ -375,6 +375,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     );
                   }, id: bookData[index]['id'],
+                  heroTag: 'bookImageHero_${bookData[index]['id']}',
                 );
               },
             ),

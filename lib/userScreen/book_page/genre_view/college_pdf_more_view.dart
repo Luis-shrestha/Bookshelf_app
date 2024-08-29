@@ -59,6 +59,7 @@ class CollegePdfMoreView extends StatelessWidget {
                     ),
                   );
                 },
+                heroTag: 'bookImageHero_${collegePdfs['id']}',
               );
             },
           ),

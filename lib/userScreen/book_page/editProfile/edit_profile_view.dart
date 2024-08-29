@@ -67,7 +67,7 @@ class _EditProfileViewState extends State<EditProfileView> {
     });
   }
 
-  Future<void> updateUserProfile() async {
+  /*Future<void> updateUserProfile() async {
     setState(() {
       _isProcessing = true;
     });
@@ -131,6 +131,92 @@ class _EditProfileViewState extends State<EditProfileView> {
       setState(() {
         _isProcessing = false;
       });
+    }
+  }*/
+
+  Future<void> updateUserProfile() async {
+    setState(() {
+      _isProcessing = true;
+    });
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text('Updating profile...'),
+            ],
+          ),
+        );
+      },
+    );
+
+    try {
+      final user = _auth.currentUser;
+
+      if (user != null) {
+        String? photoUrl;
+
+        if (selectedPhoto != null) {
+          // Upload photo to Firebase Storage
+          final storageRef = FirebaseStorage.instance
+              .ref()
+              .child('user_photos/${user.uid}/$photoName');
+          await storageRef.putFile(selectedPhoto!);
+          photoUrl = await storageRef.getDownloadURL();
+        }
+
+        // Update Firestore
+        await _firestore.collection('users').doc(user.uid).update({
+          'userPhoto': photoUrl,
+          'name': _nameTextController.text,
+          'contact': _contactTextController.text,
+          'email': _emailTextController.text,
+          'bio': _bioTextController.text,
+        });
+
+        // Update Firebase Authentication
+        await user.updateDisplayName(_nameTextController.text);
+        await user.updateEmail(_emailTextController.text);
+
+        if (photoUrl != null) {
+          await user.updatePhotoURL(photoUrl);
+        }
+
+        // Reauthenticate user if necessary
+        await user.reload();
+        User? updatedUser = _auth.currentUser;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Profile updated successfully')),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        // Prompt user to re-authenticate and then retry updating email
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Please re-authenticate to update email')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update profile: ${e.message}')),
+        );
+        AppLog.i("Update profile Error:", "${e.message}");
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update profile: $e')),
+      );
+      AppLog.i("Update profile Error:", "${e}");
+    } finally {
+      setState(() {
+        _isProcessing = false;
+      });
+      Navigator.of(context).pop();  // Close the dialog
     }
   }
 
@@ -373,4 +459,7 @@ class _EditProfileViewState extends State<EditProfileView> {
       ),
     );
   }
+
+
+
 }

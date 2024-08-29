@@ -97,30 +97,34 @@ class _DetailPageViewState extends State<DetailPageView> {
             ),
             Align(
               alignment: Alignment.topCenter,
-              child: Container(
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.25),
-                      spreadRadius: 2,
-                      blurRadius: 17,
-                      offset: Offset(5, 8),
+              child: Hero(
+                tag: 'bookImageHero_${widget.bookDetails['id']}', // Use the same tag as in the Dashboard
+                child: Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.25),
+                        spreadRadius: 2,
+                        blurRadius: 17,
+                        offset: Offset(5, 8),
+                      ),
+                    ],
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.network(
+                      widget.bookDetails['photoUrl'],
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(Icons.error);
+                      },
+                      height: 250,
                     ),
-                  ],
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Image.network(
-                    book['photoUrl'],
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(Icons.error);
-                    },
-                    height: 250,
                   ),
                 ),
               ),
-            ),
+            )
+
           ],
         ),
       ),

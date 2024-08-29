@@ -57,10 +57,10 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
-                    "Favorite Screen",
+                    "Favorite Books",
                     style: TextStyle(
                       fontSize: 25,
-                      fontWeight: FontWeight.bold,
+                      // fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -107,6 +107,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                                 ),
                               );
                             },
+                            heroTag: 'bookImageHero_${book['id']}',
                           );
                         },
                       );

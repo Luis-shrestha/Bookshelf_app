@@ -168,6 +168,7 @@ class _DashboardState extends State<Dashboard> {
                       ),
                     );
                   },
+                  heroTag: 'bookImageHero_${book['id']}', // Pass the heroTag to be used in DetailPageView
                 );
               },
             ),

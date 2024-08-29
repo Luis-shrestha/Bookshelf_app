@@ -12,6 +12,7 @@ class ReadingCardList extends StatefulWidget {
   final VoidCallback pressRead;
   final VoidCallback detail;
   final String id;
+  final String heroTag; // Add the heroTag parameter
 
   ReadingCardList({
     super.key,
@@ -21,6 +22,7 @@ class ReadingCardList extends StatefulWidget {
     required this.pressRead,
     required this.detail,
     required this.id,
+    required this.heroTag, // Initialize the heroTag parameter
   });
 
   @override
@@ -59,14 +61,17 @@ class _ReadingCardListState extends State<ReadingCardList> {
           Positioned(
             top: 5,
             left: 25,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Image.network(
-                widget.image,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(Icons.error);
-                },
-                height: 150,
+            child: Hero(
+              tag: widget.heroTag, // Use the heroTag parameter here
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.network(
+                  widget.image,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Icon(Icons.error);
+                  },
+                  height: 150,
+                ),
               ),
             ),
           ),

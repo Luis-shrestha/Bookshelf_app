@@ -82,6 +82,7 @@ class CollegePdfView extends StatelessWidget {
                       ),
                     );
                   },
+                  heroTag: 'bookImageHero_${collegePdf['id']}',
                   detail: () {
                     Navigator.of(context).push(
                       customPageRouteFromTop(
