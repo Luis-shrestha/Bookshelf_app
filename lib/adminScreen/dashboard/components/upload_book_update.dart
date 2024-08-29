@@ -303,7 +303,7 @@ class _UploadBookState extends State<UploadBook> {
                         ],
 
                         const SizedBox(height: 45),
-                        CustomButtonWidget(
+                        /*CustomButtonWidget(
                           label: "Upload College Pdf",
                           icon: Icons.swap_horiz_rounded,
                           color: Colors.orange,
@@ -315,7 +315,7 @@ class _UploadBookState extends State<UploadBook> {
                               ),
                             );
                           },
-                        ),
+                        ),*/
                       ],
                     ),
                   ),

@@ -26,6 +26,7 @@ class CustomTextField extends StatelessWidget {
       controller: controller,
       obscureText: suffixIcon == Icons.visibility_off, // Set obscureText based on suffixIcon
       decoration: InputDecoration(
+
         labelText: labelText,
         labelStyle: TextStyle(
             color: Colors.black87

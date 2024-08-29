@@ -64,7 +64,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
             return Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
-              color: constant.primaryColor,
+              color: Color(0x84e7bfb9),
               child: SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(28.0),
@@ -73,6 +73,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                     children: [
                       const SizedBox(height: 50),
                       title(),
+                      const SizedBox(height: 10),
                       loginForm(),
                     ],
                   ),
@@ -125,7 +126,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
             labelText: 'Email',
             prefixIcon: Icons.email,
           ),
-          const SizedBox(height: 8.0),
+          const SizedBox(height: 16.0),
           CustomTextField(
             focusNode: _focusPassword,
             validator: (value) => Validator.validatePassword(
@@ -170,7 +171,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
 
   Widget loginButton() {
     return _isProcessing
-        ? const CircularProgressIndicator()
+        ? const CircularProgressIndicator(color: Colors.white,)
         : ElevatedButton(
       onPressed: () async {
         _focusEmail.unfocus();
