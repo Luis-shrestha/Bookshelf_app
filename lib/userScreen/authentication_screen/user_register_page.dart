@@ -1,9 +1,9 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shelf/supports/applog/applog.dart';
 import 'package:shelf/utility/widget/form_widget/register_custom_text_field.dart';
 import '../../../utility/constant/constant.dart' as constant;
 import '../../../firebase_authentication_service/firebase_auth_helper.dart';
@@ -133,7 +133,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         Text(
                           'Register',
                           style: constant.kHeadingTextStyle.textTheme
-                              .titleLarge, // Example usage
+                              .titleLarge,
                         ),
                         const SizedBox(
                           height: 80,
@@ -199,7 +199,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             labelText: 'Password',
             prefixIcon: Icons.lock,
             suffixIcon:
-                _obscurePassword ? Icons.visibility : Icons.visibility_off,
+            _obscurePassword ? Icons.visibility : Icons.visibility_off,
             suffixIconOnPressed: _togglePasswordVisibility,
             obscureText: _obscurePassword,
           ),
@@ -231,26 +231,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
           );
 
           if (user != null) {
-            // Show email verification dialog
+            // Show the email verification dialog
+            _hideLoadingDialog(context); // Ensure loading dialog is hidden before showing the next dialog
             _showEmailVerificationDialog(context);
-
-            // Wait for the user to verify the email before allowing login
-            bool emailVerified = await FirebaseAuthHelper.isEmailVerified();
-            if (emailVerified) {
-              // Proceed with further actions if needed
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text('Email is not verified.'),
-                ),
-              );
-            }
+          } else {
+            setState(() {
+              _isProcessing = false;
+            });
+            _hideLoadingDialog(context);
           }
-
-          setState(() {
-            _isProcessing = false;
-          });
-          _hideLoadingDialog(context);
         } else {
           setState(() {
             _isProcessing = false;
@@ -268,26 +257,55 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-
   void _showEmailVerificationDialog(BuildContext context) {
+    bool isEmailVerified = false;
+    Timer? timer;
+
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Email Verification'),
-          content: const Text(
-              'Please verify your email before proceeding. Check your email for the verification link.'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            // Start the periodic timer here, to check the verification status
+            if (timer == null) {
+              timer = Timer.periodic(Duration(seconds: 3), (_) async {
+                isEmailVerified = await FirebaseAuthHelper.isEmailVerified();
+
+                if (isEmailVerified) {
+                  // Cancel the timer once the email is verified
+                  timer?.cancel();
+                  setState(() {}); // Update the dialog state
+                }
+              });
+            }
+
+            return AlertDialog(
+              title: const Text('Verify your email'),
+              content: const Text(
+                  'A verification link has been sent to your email. Please verify your email to continue.'),
+              actions: [
+                TextButton(
+                  onPressed: isEmailVerified
+                      ? () {
+                    Navigator.of(context).pop();
+                    // Switch to the login screen or perform any other action
+                    final tabController = DefaultTabController.of(context);
+                    tabController?.animateTo(0);
+                  }
+                      : null, // Disable button until email is verified
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
         );
       },
-    );
+    ).then((_) {
+      // Cleanup the timer when the dialog is dismissed
+      timer?.cancel();
+      timer = null;
+    });
   }
 
 
@@ -300,7 +318,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           TextSpan(
             text: 'Sign in',
             style:
-                const TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+            const TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
                 // Get a reference to the TabController
