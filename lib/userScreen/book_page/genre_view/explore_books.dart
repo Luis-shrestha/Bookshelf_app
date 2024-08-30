@@ -16,6 +16,7 @@ class ExploreBooks extends StatefulWidget {
 class _ExploreBooksState extends State<ExploreBooks> {
   final FetchData fetchData = FetchData();
   late Future<Map<String, List<Map<String, dynamic>>>> dataFuture;
+  Map<String, List<Map<String, dynamic>>>? filteredData;
   bool showExploreBooks = true;
 
   final ScrollController _scrollController = ScrollController();
@@ -29,6 +30,7 @@ class _ExploreBooksState extends State<ExploreBooks> {
     super.initState();
     dataFuture = fetchData.fetchAndGroupData();
     _scrollController.addListener(_scrollListener);
+    searchController.addListener(_filterBooks);
   }
 
   void _scrollListener() {
@@ -48,6 +50,30 @@ class _ExploreBooksState extends State<ExploreBooks> {
       }
     }
   }
+
+  /*void _filterBooks() {
+    final searchQuery = searchController.text.trim().toLowerCase();
+
+    setState(() {
+      filteredData = null;
+    });
+
+    dataFuture.then((groupedData) {
+      final newFilteredData = {
+        for (var entry in groupedData.entries)
+          if (entry.value
+              .any((book) => book['title']?.toString().toLowerCase().contains(searchQuery) ?? false))
+            entry.key: entry.value.where((book) {
+              final title = book['title']?.toString().toLowerCase() ?? '';
+              return searchQuery.isEmpty || title.contains(searchQuery);
+            }).toList()
+      };
+
+      setState(() {
+        filteredData = newFilteredData;
+      });
+    });
+  }*/
 
   @override
   void dispose() {
@@ -78,22 +104,88 @@ class _ExploreBooksState extends State<ExploreBooks> {
       flexibleSpace: _isScrolledDown
           ? SizedBox.shrink()
           : Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: CustomSearchBar(
-                  controller: searchController,
-                  labelText: 'Search Books',
-                  suffixIcon: Icons.search,
-                  focusNode: _searchFocus,
-                  onChanged: (val) {
-                    setState(() {
-                      // Trigger rebuild to reflect updated search results
-                    });
-                  },
-                ),
-              ),
-            ),
+        padding: const EdgeInsets.all(8.0),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+          child: CustomSearchBar(
+            controller: searchController,
+            labelText: 'Search Books',
+            suffixIcon: Icons.search,
+            focusNode: _searchFocus,
+            onChanged: (val) {
+              _filterBooks();
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _filterBooks() {
+    final searchQuery = searchController.text.trim().toLowerCase();
+
+    setState(() {
+      filteredData = null; // Reset filtered data when search changes.
+    });
+
+    dataFuture.then((groupedData) {
+      final newFilteredData = Map<String, List<Map<String, dynamic>>>.fromEntries(
+        groupedData.entries.map((entry) {
+          // Filter the books in each category.
+          final filteredBooks = entry.value.where((book) {
+            final title = book['title']?.toString().toLowerCase() ?? '';
+            return searchQuery.isEmpty || title.contains(searchQuery);
+          }).toList();
+
+          return MapEntry(entry.key, filteredBooks);
+        }).where((entry) => entry.value.isNotEmpty), // Only keep non-empty categories.
+      );
+
+      setState(() {
+        filteredData = newFilteredData; // Update the filtered data in state.
+        AppLog.i("Explore Books", "$filteredData");
+      });
+    });
+  }
+
+  Widget fetchBooks() {
+    return SliverToBoxAdapter(
+      child: FutureBuilder<Map<String, List<Map<String, dynamic>>>>(
+        future: dataFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return const Center(child: Text('Error loading data'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No data available'));
+          } else {
+            // Use filtered data if available, otherwise use the original data.
+            final dataToShow = filteredData ?? snapshot.data!;
+
+            if (dataToShow.isEmpty) {
+              return const Center(
+                child: Text('No books found matching the search criteria'),
+              );
+            }
+
+            // Display the books based on the filtered or original data.
+            return Column(
+              children: dataToShow.entries.map((entry) {
+                final category = entry.key;
+                final books = entry.value;
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GenreView(books: books, category: category),
+                  ],
+                );
+              }).toList(),
+            );
+          }
+        },
+      ),
     );
   }
 
@@ -109,26 +201,15 @@ class _ExploreBooksState extends State<ExploreBooks> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('No data available'));
           } else {
-            final groupedData = snapshot.data!;
-            final searchQuery = searchController.text.toLowerCase();
-            AppLog.d("searchQuery", "$searchQuery");
-
-            final filteredData = groupedData.map((category, books) {
-              final filteredBooks = books
-                  .where((book) =>
-                  book['title'].toString().toLowerCase().contains(searchQuery))
-                  .toList();
-              AppLog.d("Filtered Books", "$filteredBooks");
-
-              return MapEntry(category, filteredBooks);
-            }).entries.where((entry) => entry.value.isNotEmpty).toList();
-
-            if (filteredData.isEmpty) {
-              return const Center(child: Text('No books found matching the search criteria'));
+            final groupedData = filteredData ?? snapshot.data!;
+            if (groupedData.isEmpty) {
+              return const Center(
+                child: Text('No books found matching the search criteria'),
+              );
             }
 
             return Column(
-              children: filteredData.map((entry) {
+              children: groupedData.entries.map((entry) {
                 final category = entry.key;
                 final books = entry.value;
 
@@ -145,54 +226,5 @@ class _ExploreBooksState extends State<ExploreBooks> {
       ),
     );
   }*/
-  Widget fetchBooks() {
-    return SliverToBoxAdapter(
-      child: FutureBuilder<Map<String, List<Map<String, dynamic>>>>(
-        future: dataFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return const Center(child: Text('Error loading data'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No data available'));
-          } else {
-            final groupedData = snapshot.data!;
-            final searchQuery = searchController.text.trim().toLowerCase();
-
-            // Filter data based on the search query
-            final filteredData = groupedData.map((category, books) {
-              final filteredBooks = books.where((book) {
-                final title = book['title']?.toString().toLowerCase() ?? '';
-                return searchQuery.isEmpty || title.contains(searchQuery);
-              }).toList();
-
-              return MapEntry(category, filteredBooks);
-            }).entries.where((entry) => entry.value.isNotEmpty).toList();
-
-            if (filteredData.isEmpty) {
-              return const Center(
-                child: Text('No books found matching the search criteria'),
-              );
-            }
-
-            return Column(
-              children: filteredData.map((entry) {
-                final category = entry.key;
-                final books = entry.value;
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    GenreView(books: books, category: category),
-                  ],
-                );
-              }).toList(),
-            );
-          }
-        },
-      ),
-    );
-  }
-
 }
+

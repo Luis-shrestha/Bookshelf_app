@@ -1,5 +1,5 @@
-
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class NotificationService {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -8,6 +8,11 @@ class NotificationService {
     const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
     const InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+    // Request notification permission for Android 13+
+    if (await Permission.notification.isDenied) {
+      await Permission.notification.request();
+    }
   }
 
   Future<void> showNotification(String title, String body) async {

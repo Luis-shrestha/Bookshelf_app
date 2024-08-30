@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -24,6 +25,9 @@ class _DetailPageViewState extends State<DetailPageView> {
 
   late Future<List<List<Map<String, dynamic>>>> dataFuture;
   double? _progress;
+  bool _isDownloading = false;
+  bool _isCanceled = false;
+  StreamSubscription? _downloadSubscription;
 
   @override
   void initState() {
@@ -239,9 +243,12 @@ class _DetailPageViewState extends State<DetailPageView> {
       height: 50,
       child: ElevatedButton(
         onPressed: () async {
+          _isCanceled = false; // Reset the cancel flag
           showDownloadDialog(); // Show the dialog when the button is pressed
 
           try {
+            _isDownloading = true; // Set the downloading flag
+
             await FileDownloader.downloadFile(
               url: book['pdfUrl'],
               onProgress: (name, progress) {
@@ -249,47 +256,70 @@ class _DetailPageViewState extends State<DetailPageView> {
                 setState(() {
                   _progress = progress / 100;
                 });
+
+                if (_isCanceled) {
+                  _downloadSubscription?.cancel(); // Cancel the download
+                  setState(() {
+                    _progress = null;
+                    _isDownloading = false;
+                  });
+                  Navigator.of(context).pop(); // Close the dialog
+                }
               },
-              onDownloadCompleted: (filePath) async {
-                setState(() {
-                  _progress = null;
-                });
-                Navigator.of(context).pop(); // Close the dialog
-                AppLog.d("Download completed:", "${filePath}");
+                onDownloadCompleted: (filePath) async {
+                  if (!_isCanceled) {
+                    setState(() {
+                      _progress = null;
+                      _isDownloading = false;
+                    });
+                    Navigator.of(context).pop(); // Close the dialog
+                    AppLog.d("Download completed:", "${filePath}");
 
-                // Show notification on download completion
-                await notificationService.showNotification(
-                    "Download Complete",
-                    "The book ${book['bookName']} has been downloaded successfully."
-                );
+                    try {
+                      // Show notification on download completion
+                      await notificationService.showNotification(
+                          "Download Complete",
+                          "The book ${book['bookName']} has been downloaded successfully."
+                      );
+                    } catch (e) {
+                      AppLog.d("Notification Error:", "$e");
+                    }
 
-                // Show a toast message using a SnackBar
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      "Download completed: ${book['bookName']}",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    backgroundColor: Colors.green,
-                    duration: Duration(seconds: 3),
-                  ),
-                );
-              },
+                    // Show a toast message using a SnackBar
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "Download completed: ${book['bookName']}",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        backgroundColor: Colors.green,
+                        duration: Duration(seconds: 3),
+                      ),
+                    );
+                  }
+                },
 
-              onDownloadError: (error) {
-                setState(() {
-                  _progress = null;
-                });
-                Navigator.of(context).pop(); // Close the dialog
-                AppLog.d("Download Error:", " $error");
+
+                onDownloadError: (error) {
+                if (!_isCanceled) {
+                  setState(() {
+                    _progress = null;
+                    _isDownloading = false;
+                  });
+                  Navigator.of(context).pop(); // Close the dialog
+                  AppLog.d("Download Error:", " $error");
+                }
               },
             );
           } catch (e) {
-            setState(() {
-              _progress = null;
-            });
-            Navigator.of(context).pop(); // Close the dialog
-            AppLog.d("Download failed:", "$e");
+            if (!_isCanceled) {
+              setState(() {
+                _progress = null;
+                _isDownloading = false;
+              });
+              Navigator.of(context).pop(); // Close the dialog
+              AppLog.d("Download failed:", "$e");
+            }
           }
         },
         child: Row(
@@ -354,7 +384,12 @@ class _DetailPageViewState extends State<DetailPageView> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                _isCanceled = true; // Set the cancel flag
+                setState(() {
+                  _progress = null;
+                  _isDownloading = false;
+                });
+                Navigator.of(context).pop(); // Close the dialog
               },
               child: Text('Cancel'),
             ),
